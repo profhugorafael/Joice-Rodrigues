@@ -1,0 +1,19 @@
+{
+  "eq01" : {
+    "janela_total" : [20, 10, 15, 15],
+    "maquinas" : [
+      {
+        "janela" : 10,
+        "maquina de origem": 2
+      },
+      {
+        "janela" : 10,
+        "maquina de origem": 2
+      },
+      {
+        "janela" : 10,
+        "maquina de origem": 2
+      }
+    ]
+  }
+}

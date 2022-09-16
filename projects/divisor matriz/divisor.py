@@ -5,10 +5,16 @@ from random import randint
 # declarando para fins de teste
 
 # instancias['Configuração']
-configuracao = [[1, 0], [1, 1], [0, 1]] 
+configuracao = [[1, 0], [1, 1], [0, 1]]
+
+# Janela Final = capacidade de processamento de cada maquina
+janela_final = [20, 10, 21, 15]
 
 # instancias['Processamento']
-processamento = [[3, 3, 4, 1], [2, 3, 1, 1], [1, 1, 1, 2]]
+# processamento = atividade x maquina
+processamento = [ [7, 4, 6, 9],
+                  [7, 9, 5, 1],
+                  [8, 12, 9, 2] ]
 
 # ----------------------------------------------------
 # criacao das equipes (indexadas em 1)
@@ -18,13 +24,14 @@ equipes = dict()
 
 for numero in range(numero_equipes):
   nome_equipe = 'eq' + str(numero+1)
-  equipes[nome_equipe] = [ ]
-
+  equipes[nome_equipe] = dict()
+  equipes[nome_equipe]['janela total'] = janela_final
+  equipes[nome_equipe]['maquinas'] = [ ]
+  
 # ----------------------------------------------------
 # subdivide
 
 def divideMatriz(configuracao, processamento, equipes):
-
 
   for linha in range( len(configuracao) ) :
     ativos = descobreAtivos(configuracao[linha])
@@ -46,17 +53,30 @@ def descobreAtivos(vetorBinario):
 
 def distribuiParaAtivos(origem, ativos, equipes) :
   
-  for valor in origem:
+  for maquina_index in range( len(origem) ):
+    
     pos = randint(0, len(ativos) - 1)
     nome_equipe = 'eq' + str(ativos[pos] + 1)
-    # print(f'{valor} vai para {nome_equipe}')
-    equipes[nome_equipe].append(valor)
+
+    maquina = {
+      'janela': origem[maquina_index],
+      'maquina de origem': maquina_index
+    }
+
+    equipes[nome_equipe]['janela total'][maquina_index] -= maquina['janela']
+    equipes[nome_equipe]['maquinas'].append(maquina)
+    # print(janela_final)
 
 # ----------------------------------------------------
 # aplicacao
 
 divideMatriz(configuracao, processamento, equipes)
 
-for key in equipes.keys() :
-    print(f'{key} : {equipes[key]}')
+for key in equipes.keys():
+  print(f'# {key}')
+  print(f'janela total final : {equipes[key]["janela total"]} ')
+
+  for maquina in equipes[key]['maquinas']:
+    print(f'{maquina}')
+
 # ----------------------------------------------------
