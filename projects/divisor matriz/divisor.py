@@ -13,7 +13,7 @@ janela_final = [20, 10, 21, 15]
 # instancias['Processamento']
 # processamento = atividade x maquina
 processamento = [ [7, 4, 6, 9],
-                  [7, 9, 11, 1],
+                  [7, 9, 5, 1],
                   [8, 12, 9, 2] ]
 
 # ----------------------------------------------------
@@ -24,8 +24,10 @@ equipes = dict()
 
 for numero in range(numero_equipes):
   nome_equipe = 'eq' + str(numero+1)
-  equipes[nome_equipe] = [ ]
-
+  equipes[nome_equipe] = dict()
+  equipes[nome_equipe]['janela_total'] = janela_final
+  equipes[nome_equipe]['maquinas'] = [ ]
+  
 # ----------------------------------------------------
 # subdivide
 
@@ -52,17 +54,19 @@ def descobreAtivos(vetorBinario):
 def distribuiParaAtivos(origem, ativos, equipes) :
   
   for maquina in range( len(origem) ):
-    valor = origem[maquina]
     
     pos = randint(0, len(ativos) - 1)
+
+    while(ativos[pos][])
+
     nome_equipe = 'eq' + str(ativos[pos] + 1)
 
     entrada = {
-      'valor': valor,
+      'tempo': origem[maquina],
       'maquina de origem': maquina
     }
 
-    janela_final[maquina] -= valor
+    janela_final[maquina] -= entrada['tempo']
     equipes[nome_equipe].append(entrada)
     print(janela_final)
 
