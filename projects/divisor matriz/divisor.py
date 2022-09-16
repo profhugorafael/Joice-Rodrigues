@@ -25,7 +25,7 @@ equipes = dict()
 for numero in range(numero_equipes):
   nome_equipe = 'eq' + str(numero+1)
   equipes[nome_equipe] = dict()
-  equipes[nome_equipe]['janela_total'] = janela_final
+  equipes[nome_equipe]['janela total'] = janela_final
   equipes[nome_equipe]['maquinas'] = [ ]
   
 # ----------------------------------------------------
@@ -53,33 +53,30 @@ def descobreAtivos(vetorBinario):
 
 def distribuiParaAtivos(origem, ativos, equipes) :
   
-  for maquina in range( len(origem) ):
+  for maquina_index in range( len(origem) ):
     
     pos = randint(0, len(ativos) - 1)
-
-    while(ativos[pos][])
-
     nome_equipe = 'eq' + str(ativos[pos] + 1)
 
-    entrada = {
-      'tempo': origem[maquina],
-      'maquina de origem': maquina
+    maquina = {
+      'janela': origem[maquina_index],
+      'maquina de origem': maquina_index
     }
 
-    janela_final[maquina] -= entrada['tempo']
-    equipes[nome_equipe].append(entrada)
-    print(janela_final)
+    equipes[nome_equipe]['janela total'][maquina_index] -= maquina['janela']
+    equipes[nome_equipe]['maquinas'].append(maquina)
+    # print(janela_final)
 
 # ----------------------------------------------------
 # aplicacao
 
 divideMatriz(configuracao, processamento, equipes)
 
-for key in equipes.keys() :
-    print(f'# {key}')
-    
-    for elemento in equipes[key]:
-      print(f'{elemento}')
+for key in equipes.keys():
+  print(f'# {key}')
+  print(f'janela total final : {equipes[key]["janela total"]} ')
 
-print(janela_final)
+  for maquina in equipes[key]['maquinas']:
+    print(f'{maquina}')
+
 # ----------------------------------------------------
