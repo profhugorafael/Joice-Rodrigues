@@ -5,16 +5,16 @@ from random import randint
 # declarando para fins de teste
 
 # instancias['Configuração']
-configuracao = [[1, 0], [1, 1], [0, 1]]
+configuracao = [[1, 0, 1], [0, 1, 1], [1, 1, 1]]
 
 # Janela Final = capacidade de processamento de cada maquina
 janela_final = [20, 10, 21, 15]
 
 # instancias['Processamento']
 # processamento = atividade x maquina
-processamento = [ [7, 4, 6, 9],
-                  [7, 9, 5, 1],
-                  [8, 12, 9, 2] ]
+processamentos = [ [4, 5, 10, 1],
+                  [4, 5, 12, 1],
+                  [4, 7, 13, 1] ]
 
 # ----------------------------------------------------
 # criacao das equipes (indexadas em 1)
@@ -25,7 +25,11 @@ equipes = dict()
 for numero in range(numero_equipes):
   nome_equipe = 'eq' + str(numero+1)
   equipes[nome_equipe] = dict()
-  equipes[nome_equipe]['janela total'] = janela_final
+  equipes[nome_equipe]['janela total'] = [ ]
+  
+  for valor in janela_final:
+    equipes[nome_equipe]['janela total'].append(valor)
+
   equipes[nome_equipe]['maquinas'] = [ ]
   
 # ----------------------------------------------------
@@ -40,13 +44,36 @@ def divideMatriz(configuracao, processamento, equipes):
 # ----------------------------------------------------
 # descobre equipes ativas para receber este elemento
 
-def descobreAtivos(vetorBinario):
+def descobreAtivos(vetor_binario):
   ativos = [ ]
 
-  for i in range( len(vetorBinario) ):
-    if vetorBinario[i] : ativos.append(i)
+  for i in range( len(vetor_binario) ):
+    if vetor_binario[i] : ativos.append(i)
   
   return ativos
+
+# ----------------------------------------------------
+# filtra ativos por EQ
+
+def filtraAtivosPorJanela(maquina, ativos, equipes):
+
+  numero_da_maquina = maquina['maquina de origem']
+  janela = maquina['janela']
+  ativos_temporarios = [ ]
+
+  for i in range( len(ativos) ):
+    ativo = ativos[i]
+    nome_equipe = 'eq' + str(ativo + 1)
+    print(f'{nome_equipe}')
+    equipe = equipes[nome_equipe]
+    janela_na_equipe_para_maquina = equipe['janela total'][numero_da_maquina]
+
+    print(f'espaço: {janela_na_equipe_para_maquina} || custo {janela}')
+
+    if janela_na_equipe_para_maquina >= janela:
+      ativos_temporarios.append(ativo)
+
+  return ativos_temporarios
 
 # ----------------------------------------------------
 # distribui para as equipes ativas aleatoriamente
@@ -54,23 +81,40 @@ def descobreAtivos(vetorBinario):
 def distribuiParaAtivos(origem, ativos, equipes) :
   
   for maquina_index in range( len(origem) ):
-    
-    pos = randint(0, len(ativos) - 1)
-    nome_equipe = 'eq' + str(ativos[pos] + 1)
-
     maquina = {
       'janela': origem[maquina_index],
       'maquina de origem': maquina_index
     }
+    
+    ativos_temporarios = filtraAtivosPorJanela(maquina, ativos, equipes)
+    print(f' {ativos_temporarios} || {ativos} ')
+    pos = randint(0, len(ativos_temporarios)-1 )
+    nome_equipe = 'eq' + str(ativos_temporarios[pos] + 1)
 
-    equipes[nome_equipe]['janela total'][maquina_index] -= maquina['janela']
-    equipes[nome_equipe]['maquinas'].append(maquina)
+    equipe = equipes[nome_equipe]
+
+    equipe['janela total'][maquina_index] -= maquina['janela']
+    print(f'A equipe {nome_equipe} recebeu na maquina {maquina_index} menos {maquina["janela"]}')
+
+    equipe['maquinas'].append(maquina)
+
+    print('-------------------')
+    printEquipes()
+    print('-------------------')
     # print(janela_final)
+
+def printEquipes():
+  for key in equipes.keys():
+    print(f'# {key}')
+    print(f'janela total final : {equipes[key]["janela total"]} ')
+
+    for maquina in equipes[key]['maquinas']:
+      print(f'{maquina}')
 
 # ----------------------------------------------------
 # aplicacao
 
-divideMatriz(configuracao, processamento, equipes)
+divideMatriz(configuracao, processamentos, equipes)
 
 for key in equipes.keys():
   print(f'# {key}')
