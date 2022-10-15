@@ -4,6 +4,9 @@ from random import randint
 # ----------------------------------------------------
 # declarando para fins de teste
 
+# TEMPO
+tempo = 0
+
 # instancias['Configuração']
 configuracao = [[1, 0, 1], [0, 1, 1], [1, 1, 1]]
 
@@ -98,7 +101,7 @@ def filtraAtivosPorJanelaFinal(maquina, ativos, equipes):
 def filtraAtivosPorJanelaInicial(maquina, ativos, equipes):
 
   numero_da_maquina = maquina['maquina de origem']
-  janela = maquina['janela'] 
+  janela = maquina['janela']
   ativos_temporarios = [ ]
 
   for i in range( len(ativos) ):
@@ -180,7 +183,9 @@ def distribuiParaAtivos(origem, ativos, equipes, indice_atividade) :
     equipe = equipes[nome_equipe]
 
     equipe['janela final local'][maquina_index] -= maquina['janela']
+
     equipe['janela inicial'][maquina_index] = 0
+
     equipe['disponibilidade'] -= maquina['janela']
     
     # DEBUG
