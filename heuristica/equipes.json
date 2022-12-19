@@ -1,0 +1,21 @@
+{
+  "eq01" : {
+    "disponibilidade": 40,
+    "janela total" : [20, 10, 15, 15],
+    "janela inicial" : [3, 3, 4, 7],
+    "maquinas" : [
+      {
+        "janela" : 10,
+        "maquina de origem": 2
+      },
+      {
+        "janela" : 10,
+        "maquina de origem": 2
+      },
+      {
+        "janela" : 10,
+        "maquina de origem": 2
+      }
+    ]
+  }
+}
