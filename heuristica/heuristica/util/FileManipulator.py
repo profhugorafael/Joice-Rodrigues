@@ -4,6 +4,8 @@ class FileManipulator:
 
   QUEBRA_DE_LINHA = '\n'
 
+  # ------------------------------------------
+
   def __init__(self, nome_do_arquivo):
     self.nome_do_arquivo = nome_do_arquivo
     self.processamentos = []
@@ -17,7 +19,8 @@ class FileManipulator:
     # x = os.open('../test/' + nome_do_arquivo, flags = os.O_RDONLY)
     # caminho_arquivo = os.path.join(nome_do_arquivo)
     not_working = os.path.join('heuristica', 'test', 'instancia1.txt')
-    working = 'C:\Aulas\Alunos\Python & R\Joice\Joice-Rodrigues\Joice-Rodrigues\heuristica\\test\\'
+    
+    working = 'C:\Aulas\Alunos\Python & R\Joice\heuristica\heuristica\\test\\'
   
     working += nome_do_arquivo
 
@@ -34,6 +37,7 @@ class FileManipulator:
           vetor = self.__linha_para_vetor__(linha)
           matriz.append(vetor)
 
+  # ------------------------------------------
 
   def __switch_case_atributo__(self, index, leitura):
 
@@ -50,7 +54,7 @@ class FileManipulator:
     elif index == 4:
       self.disponibilidades = leitura
 
-
+  # ------------------------------------------
 
   def __linha_para_vetor__(self, linha):
     linha = linha.split()
@@ -59,6 +63,7 @@ class FileManipulator:
       linha[index] = int( linha[index] )
 
     return linha
+  # ------------------------------------------
 
   def __corrige__matriz__em__vetor__(self, matriz) :
     if ( len(matriz) == 1 ) :
@@ -68,11 +73,14 @@ class FileManipulator:
       return aux
     
     return matriz
+
+  # ------------------------------------------
   
   def __str__(self):
     aux =  f'Processamentos = {self.processamentos}\n'
     aux += f'Disponibilidades = {self.disponibilidades}\n'
     aux += f'Janelas Finais = {self.janelas_finais}\n'
     aux += f'Janelas Iniciais = {self.janelas_iniciais}\n'
+    aux += f'configuracoes = {self.configuracoes}\n'
     return aux
     
