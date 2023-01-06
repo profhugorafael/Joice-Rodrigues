@@ -4,12 +4,8 @@ from util.Processador import Processador
 from util.FileManipulator import FileManipulator
 
 dados = FileManipulator('instancia1.txt')
-equipes = list[Equipe]
 
-processador = Processador(
-  equipes = equipes,
-  dados = dados)
-
+processador = Processador(dados)
 processador.inicializar_equipes()
 
 while processador.processar_proximo() :

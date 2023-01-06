@@ -1,5 +1,7 @@
 from model.Maquina import Maquina
 
+def eh_maquina(elemento):
+  return True if isinstance(elemento, Maquina) else False
 class Equipe:
 
   # construtor
@@ -8,9 +10,11 @@ class Equipe:
     self.disponibilidade = disponibilidade
     self.janela_final = janela_final.copy()
     self.janela_inicial = janela_final.copy()
-    self.maquinas = list[Maquina]
+    self.maquinas = []
 
-  def adiciona_maquina(self, nova_maquina: Maquina):
+  def adiciona_maquina(self, nova_maquina):
+    if not eh_maquina(nova_maquina) : return
+
     self.maquinas.append(nova_maquina)
     self.__desconta_tempo_de_processamento__(nova_maquina)
     self.__desconta__tempo__disponibilidade__(nova_maquina)
@@ -19,23 +23,23 @@ class Equipe:
     soma = 0
 
     for maquina in self.maquinas:
-       soma += maquina.tempo_de_processamento
+       soma += maquina.tempo_processamento
 
     return soma
 
-  def __desconta_tempo_de_processamento__(self, nova_maquina : Maquina):
+  def __desconta_tempo_de_processamento__(self, nova_maquina):
     self.janela_final[nova_maquina.index] -= nova_maquina.tempo_processamento
 
-  def __desconta__tempo__disponibilidade__(self, nova_maquina: Maquina):
+  def __desconta__tempo__disponibilidade__(self, nova_maquina):
     self.disponibilidade -= nova_maquina.tempo_processamento
 
   def __str__(self):
-    aux = f'EQUIPE #{id:2.0}'
-    aux += f'DISPONIBILIDADE: {self.disponibilidade}'
-    aux += f'MAQUINAS:\n'
-    aux += f'TEMPO TOTAL {self.tempo_de_processamento()}'
+    aux = f'EQUIPE # {self.id}\n'
+    aux += f'DISPONIBILIDADE: {self.disponibilidade}\n'
+    aux += f'TEMPO TOTAL {self.tempo_de_processamento()}\n'
+    aux += f'MAQUINAS: \n'
 
     for maquina in self.maquinas:
-      aux += str(maquina) + '\n'
+      aux += '\t' + str(maquina) + '\n'
 
     return aux

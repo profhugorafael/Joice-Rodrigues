@@ -3,18 +3,20 @@ from util.Filtro import Filtro
 from model.Equipe import Equipe
 from model.Maquina import Maquina
 
+def eh_equipe(elemento):
+  return True if isinstance(elemento, Equipe) else False
+
 class Processador:
 
-  def __init__(self, dados : FileManipulator, equipes: list[Equipe] ):
+  def __init__(self, dados: FileManipulator):
     self.dados = dados
-    self.equipes = equipes
+    self.equipes = []
     self.index = 0
     self.limit = len(self.dados.processamentos)
-    print(self.limit)
 
   # ------------------------------------------
 
-  def inicializar_equipes(self):
+  def inicializar_equipes(self) :
     
     quantidade = len(self.dados.configuracoes[0])
 
@@ -26,24 +28,28 @@ class Processador:
         janela_inicial = self.dados.janelas_iniciais
       )
 
-      self.equipes().append(equipe)
+      if eh_equipe(equipe) : self.equipes.append(equipe)
 
   # ------------------------------------------
 
-  def processar_proximo(self):
-    if self.index >= self.limit : 
-      print('its over')
+  def processar_proximo(self) -> bool :
+    
+    if self.__alcancou_limite__(): 
       return False
+
+    print(f'processando indice: {self.index}')
 
     configuracao = self.dados.configuracoes[self.index]
     equipes_disponiveis = self.__captura_equipes_disponiveis__(configuracao)
     self.__distribui_para_equipes_disponiveis__(equipes_disponiveis)
+
     self.index += 1
     return True
 
   # ------------------------------------------
 
-  def __distribui_para_equipes_disponiveis__(self, equipes_disponiveis : list[Equipe]):
+  def __distribui_para_equipes_disponiveis__(self, equipes_disponiveis):
+
     processamento = self.dados.processamentos[self.index]
 
     for index_maquina in range( len(processamento) ):
@@ -54,10 +60,7 @@ class Processador:
         indice_atividade = self.index
       )
 
-      filtro = Filtro(
-        equipes_disponiveis = equipes_disponiveis,
-        maquina = maquina
-      )
+      filtro = Filtro(maquina, equipes_disponiveis)
 
       filtro.filtraAtivosPorJanelaFinal()
       filtro.filtraAtivosPorDisponibilidade()
@@ -66,19 +69,20 @@ class Processador:
 
       assert len(filtro.equipes_disponiveis) > 0, 'problema nos filtros'
 
-      index = filtro.equipes_disponiveis[0].id
-      equipes_disponiveis[index].adiciona_maquina(maquina)
+      indice_para_receber = filtro.equipes_disponiveis[0].id
+      print(f' recebe a equipe : {indice_para_receber}')
+      self.equipes[indice_para_receber].adiciona_maquina(maquina)
 
   # ------------------------------------------
 
   def __captura_equipes_disponiveis__(self, configuracao):
-    disponiveis = list[Equipe]
+    disponiveis = [ ]
 
     for i in range( len(configuracao) ):
       if configuracao[i] : 
-        print(i)
-        equipe = list(self.equipes)[i]
-        disponiveis().append(equipe)
+        equipe = self.equipes[i]
+        if eh_equipe(equipe) :
+          disponiveis.append(equipe)
     
     return disponiveis
 
@@ -92,3 +96,14 @@ class Processador:
       aux += '---------------\n'
 
     return aux
+
+  # ------------------------------------------
+  
+  def __alcancou_limite__(self) -> bool :
+    print(f'index atual: {self.index}')
+    print(f'index limite: {self.limit}')
+
+    if self.index >= self.limit : 
+      return True
+
+    return False

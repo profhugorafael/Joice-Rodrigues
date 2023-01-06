@@ -5,9 +5,9 @@ class Filtro:
 
   # ------------------------------------------
 
-  def __init__(self, maquina : Maquina, equipes_disponiveis : list[Equipe]):
+  def __init__(self, maquina : Maquina, equipes_disponiveis):
     self.maquina = maquina
-    self.equipes_disponiveis = equipes_disponiveis.copy()
+    self.equipes_disponiveis = equipes_disponiveis
 
   # ------------------------------------------
 
@@ -37,10 +37,10 @@ class Filtro:
   # ------------------------------------------
 
   def ordenaPorJanelaFinal_desc(self) :
-    ordenacao = sorted (
-      list = self.equipes_disponiveis,
-      key = lambda equipe : equipe.janela_final,
-      reverse = True)
+    ordenacao = sorted ( 
+      self.equipes_disponiveis,
+      key=lambda e: e.janela_final,
+      reverse=True)
 
     self.equipes_disponiveis = ordenacao.copy()
 
@@ -49,8 +49,8 @@ class Filtro:
   def ordenaPorJanelaInicial_asc(self) : 
   
     ordenacao = sorted(
-      list = self.equipes_disponiveis,
-      key = lambda equipe : equipe.janela_inicial
+      self.equipes_disponiveis,
+      key=lambda equipe : equipe.janela_inicial
     )
 
     self.equipes_disponiveis = ordenacao.copy()
