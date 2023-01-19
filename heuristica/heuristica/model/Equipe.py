@@ -9,34 +9,47 @@ class Equipe:
     self.id = id
     self.disponibilidade = disponibilidade
     self.janela_final = janela_final.copy()
-    self.janela_inicial = janela_final.copy()
+    self.janela_inicial = janela_inicial.copy()
+    self.tempo_de_processamento = 0
     self.maquinas = []
 
   def adiciona_maquina(self, nova_maquina):
     if not eh_maquina(nova_maquina) : return
 
     self.maquinas.append(nova_maquina)
-    self.__desconta_tempo_de_processamento__(nova_maquina)
-    self.__desconta__tempo__disponibilidade__(nova_maquina)
+    self.__ajusta_janela_inicial__(nova_maquina)
+    self.__ajusta_tempo_janela_final__(nova_maquina)
+    self.__ajusta_tempo_disponibilidade__(nova_maquina)
 
-  def tempo_de_processamento(self):
-    soma = 0
+  # ------------------------------------------
 
-    for maquina in self.maquinas:
-       soma += maquina.tempo_processamento
-
-    return soma
-
-  def __desconta_tempo_de_processamento__(self, nova_maquina):
+  def __ajusta_tempo_janela_final__(self, nova_maquina):
     self.janela_final[nova_maquina.index] -= nova_maquina.tempo_processamento
+  
+  # ------------------------------------------
 
-  def __desconta__tempo__disponibilidade__(self, nova_maquina):
+  def __ajusta_tempo_disponibilidade__(self, nova_maquina):
     self.disponibilidade -= nova_maquina.tempo_processamento
+  
+  # ------------------------------------------
 
+  def __ajusta_janela_inicial__(self, nova_maquina):
+
+    index_maquina = nova_maquina.index
+    janela = nova_maquina.tempo_processamento      
+    horario_autorizado = self.janela_inicial[index_maquina]
+    tempo_atual = self.tempo_de_processamento
+
+    # precisa esperar ?
+    tempo_ajustado = max(tempo_atual, horario_autorizado) + janela
+    self.tempo_de_processamento = tempo_ajustado
+
+  # ------------------------------------------
+  
   def __str__(self):
     aux = f'EQUIPE # {self.id}\n'
     aux += f'DISPONIBILIDADE: {self.disponibilidade}\n'
-    aux += f'TEMPO TOTAL {self.tempo_de_processamento()}\n'
+    aux += f'TEMPO TOTAL {self.tempo_de_processamento}\n'
     aux += f'MAQUINAS: \n'
 
     for maquina in self.maquinas:

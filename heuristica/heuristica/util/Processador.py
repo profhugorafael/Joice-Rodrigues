@@ -12,12 +12,17 @@ class Processador:
     self.dados = dados
     self.equipes = []
     self.index = 0
-    self.limit = len(self.dados.processamentos)
+    self.__soma_atual__ = 1
+    quantidade_equipes = len(self.dados.configuracoes[0])
+    self.__checklist_configuracoes__ = [ ]
+    self.limit = quantidade_equipes
+
+    for _ in range(len(self.dados.configuracoes) + 1):
+      self.__checklist_configuracoes__.append(False)
 
   # ------------------------------------------
 
-  def inicializar_equipes(self) :
-    
+  def inicializar_equipes(self) :    
     quantidade = len(self.dados.configuracoes[0])
 
     for i in range(quantidade):
@@ -34,10 +39,12 @@ class Processador:
 
   def processar_proximo(self) -> bool :
     
+    # ! loop infinito com o próximo index
+    
+    self.index = self.__proximo_index__()
+
     if self.__alcancou_limite__(): 
       return False
-
-    print(f'processando indice: {self.index}')
 
     configuracao = self.dados.configuracoes[self.index]
     equipes_disponiveis = self.__captura_equipes_disponiveis__(configuracao)
@@ -70,7 +77,6 @@ class Processador:
       assert len(filtro.equipes_disponiveis) > 0, 'problema nos filtros'
 
       indice_para_receber = filtro.equipes_disponiveis[0].id
-      print(f' recebe a equipe : {indice_para_receber}')
       self.equipes[indice_para_receber].adiciona_maquina(maquina)
 
   # ------------------------------------------
@@ -98,12 +104,28 @@ class Processador:
     return aux
 
   # ------------------------------------------
+
+  def __proximo_index__(self):
+
+    for i in range(len(self.dados.configuracoes)):
+      configuracao = self.dados.configuracoes[i]
+      soma = sum(configuracao)
+      nao_processada = self.__checklist_configuracoes__[i]
+
+      if soma == self.__soma_atual__ and nao_processada:
+        self.__checklist_configuracoes__[i] = True
+        return i
+
+    self.__soma_atual__ += 1
+    if not self.__alcancou_limite__():
+      return self.__proximo_index__() 
+
+
+  # ------------------------------------------
   
   def __alcancou_limite__(self) -> bool :
-    print(f'index atual: {self.index}')
-    print(f'index limite: {self.limit}')
 
-    if self.index >= self.limit : 
+    if self.index > self.limit : 
       return True
 
     return False
