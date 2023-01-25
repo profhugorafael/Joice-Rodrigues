@@ -6,6 +6,13 @@ from model.Maquina import Maquina
 def eh_equipe(elemento):
   return True if isinstance(elemento, Equipe) else False
 
+def highligth(msg):
+  print()
+  print('###################################')
+  print(f'||| {msg} |||')
+  print('###################################')
+  print()
+
 class Processador:
 
   def __init__(self, dados: FileManipulator):
@@ -13,11 +20,10 @@ class Processador:
     self.equipes = []
     self.index = 0
     self.__soma_atual__ = 1
-    quantidade_equipes = len(self.dados.configuracoes[0])
     self.__checklist_configuracoes__ = [ ]
-    self.limit = quantidade_equipes
+    self.limit = len(self.dados.configuracoes[0])
 
-    for _ in range(len(self.dados.configuracoes) + 1):
+    for _ in range(len(self.dados.configuracoes)):
       self.__checklist_configuracoes__.append(False)
 
   # ------------------------------------------
@@ -39,12 +45,14 @@ class Processador:
 
   def processar_proximo(self) -> bool :
     
-    # ! loop infinito com o próximo index
+    if self.__alcancou_limite__(): 
+      print('##############################')
+      print('LIMITE ALCANÇADO!')
+      print('##############################')
+      return False
     
     self.index = self.__proximo_index__()
-
-    if self.__alcancou_limite__(): 
-      return False
+    print(f'index atual = {self.index}')
 
     configuracao = self.dados.configuracoes[self.index]
     equipes_disponiveis = self.__captura_equipes_disponiveis__(configuracao)
@@ -68,13 +76,18 @@ class Processador:
       )
 
       filtro = Filtro(maquina, equipes_disponiveis)
+      # highligth(f'original = {len(filtro.equipes_disponiveis)} equipes')
 
       filtro.filtraAtivosPorJanelaFinal()
+      # highligth(f'pos janela final = {len(filtro.equipes_disponiveis)} equipes')
+
       filtro.filtraAtivosPorDisponibilidade()
+      # highligth(f'pos disponibilidade = {len(filtro.equipes_disponiveis)} equipes')
+
       filtro.ordenaPorJanelaFinal_desc()
       filtro.ordenaPorJanelaInicial_asc()
 
-      assert len(filtro.equipes_disponiveis) > 0, 'problema nos filtros'
+      assert len(filtro.equipes_disponiveis) > 0, self 
 
       indice_para_receber = filtro.equipes_disponiveis[0].id
       self.equipes[indice_para_receber].adiciona_maquina(maquina)
@@ -94,25 +107,21 @@ class Processador:
 
   # ------------------------------------------
 
-  def __str__(self):
-    aux = ''
-
-    for equipe in self.equipes:
-      aux += str(equipe) + '\n'
-      aux += '---------------\n'
-
-    return aux
-
-  # ------------------------------------------
-
   def __proximo_index__(self):
+
+    print(f'soma desejada: {self.__soma_atual__}')
+    print('config = [', end=' ')
+    for x in self.__checklist_configuracoes__:
+      print('.' if x else "MISS", end=', ')
+    print(']')
 
     for i in range(len(self.dados.configuracoes)):
       configuracao = self.dados.configuracoes[i]
-      soma = sum(configuracao)
-      nao_processada = self.__checklist_configuracoes__[i]
+      soma = sum(configuracao) # 1 a n
+      processado = self.__checklist_configuracoes__[i]
 
-      if soma == self.__soma_atual__ and nao_processada:
+      if soma == self.__soma_atual__ and not processado:
+        print(f'soma atual = {soma} | esperada = {self.__soma_atual__}')
         self.__checklist_configuracoes__[i] = True
         return i
 
@@ -122,10 +131,25 @@ class Processador:
 
 
   # ------------------------------------------
-  
+
   def __alcancou_limite__(self) -> bool :
 
-    if self.index > self.limit : 
+    if self.__soma_atual__ > self.limit:
       return True
 
-    return False
+    for linha in self.__checklist_configuracoes__ : 
+      if not linha:
+         return False
+
+    return True
+
+  # ------------------------------------------
+
+  def __str__(self):
+    aux = ''
+
+    for equipe in self.equipes:
+      aux += str(equipe) + '\n'
+      aux += '---------------\n'
+
+    return aux
