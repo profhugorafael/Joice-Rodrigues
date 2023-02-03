@@ -62,6 +62,16 @@ class Processador:
     return True
 
   # ------------------------------------------
+  
+  def encontra_equipe_com_maior_tempo(self) -> Equipe:
+    equipe_maior_tempo = self.equipes[0]
+
+    for equipe in self.equipes:
+      equipe_maior_tempo = max(equipe, equipe_maior_tempo)
+
+    return equipe_maior_tempo
+
+  # ------------------------------------------
 
   def __distribui_para_equipes_disponiveis__(self, equipes_disponiveis):
 
