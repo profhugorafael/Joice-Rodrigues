@@ -33,8 +33,6 @@ def initial_solution() :
 def generate_neighbor(equipes):
   alternative_solution = equipes
 
-  
-
 def energy(equipe):
   if not isinstance(equipe, Equipe):
     pass
