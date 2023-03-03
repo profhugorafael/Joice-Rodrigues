@@ -1,48 +1,84 @@
 from model.Maquina import Maquina
-from random import randint as posicao_aleatoria
+from random import randint
+
+
+# [ 12, 14, 15, 20 ]
+#    ^  ^
+# ORDENAÇÃO: n*log(n)
+# COMPLEXIDADE: (n)(n-1)(n*log(n))/2
+# IDENTIFICAR: condição de parada
+# PROBLEMA: loop de trocas
+# Ordena e captura disponiveis por disponibilidade e configuração
+
+# maquina -> origem == ind. ativ -> config
+
+# equipe
+#  - maquina activeCheckSimulateAnnealing ||
+#  - maquina
+#  - maquina
+#  - maquina
+#  - maquina
+# equipe
+#  - maquina
+#  - maquina
+#  - maquina
+#  - maquina
+#  - maquina
+
+def posicao_aleatoria(vetor):
+    inicio = 0
+    final = len(vetor)
+    return randint(inicio, final-1)
 
 
 class Trocador:
+    # TODO precisamos validar na disponíveis se respeita janela inicial
+    # TODO precisamos validar na disponíveis se respeita janela final
 
     def __init__(self, equipes, configuracoes):
+        """
+            @param equipes: recebe uma lista do tipo Equipe
+            @param configuracoes: recebe a matriz de configuração
+        """
         self.configuracoes = configuracoes
         self.equipes = equipes
         self.equipes_ordenadas = sorted(
             equipes, key=lambda x: x.disponibilidade)
-
-    # [ 12, 14, 15, 20 ]
-    #    ^  ^
-    # ORDENAÇÃO: n*log(n)
-    # COMPLEXIDADE: (n)(n-1)(n*log(n))/2
-    # IDENTIFICAR: condição de parada
-    # PROBLEMA: loop de trocas
-    # Ordena e captura disponiveis por disponibilidade e configuração
-
-    # maquina -> origem == ind. ativ -> config
 
     # ------------------------------------------
 
     def realiza_troca(self):
         self.ordena_equipes_por_disponibilidade()
         equipe_origem = self.equipes[0]
-        maquina = self.pior_maquina_da_equipe(equipe_origem)
+        maquina = self.escolhe_maquina_aleatoria(equipe_origem)
         disponiveis = self.equipes_disponiveis(maquina)
 
+        disponiveis.remove(equipe_origem)
+
         if len(disponiveis) == 0:
-            return
+            maquina.marcar()
 
-        pos_equipe_destino = posicao_aleatoria(0, len(disponiveis) - 1)
-        equipe_destino = disponiveis[pos_equipe_destino]
+            if equipe_origem.existe_equipe_valida():
+                self.realiza_troca()
 
-        equipe_origem.maquinas.remove(maquina)
-        equipe_destino.maquinas.append(maquina)
+            equipe_origem.liberar_maquinas_para_troca()
+        else:
+            pos_equipe_destino = posicao_aleatoria(disponiveis)
+            equipe_destino = disponiveis[pos_equipe_destino]
+
+            equipe_origem.maquinas.remove(maquina)
+            equipe_destino.maquinas.append(maquina)
+            maquina.reatribuir_equipe(equipe_destino)
+
+            print(f'trocando a maquina: {maquina}')
+            print(f'origem: {equipe_origem}')
+            print(f'destino: {equipe_destino}')
 
     # ------------------------------------------
 
     def ordena_equipes_por_disponibilidade(self):
         def criterio_por_disponibilidade(equipe): return equipe.disponibilidade
         # * o sorted ordena de modo crescente por disponibilidade
-        # ! TODO checar se a melhor ordem realmente é a reversed
         return sorted(self.equipes, key=criterio_por_disponibilidade, reverse=True)
 
     # ------------------------------------------
@@ -86,13 +122,12 @@ class Trocador:
 
     # ------------------------------------------
 
-    def pior_maquina_da_equipe(self, equipe):
-        pior_maquina = equipe.maquinas[0]
-
-        for maquina in equipe.maquinas:
-            if maquina.tempo_processamento > pior_maquina.tempo_processamento:
-                pior_maquina = maquina
-
-        return pior_maquina
+    def escolhe_maquina_aleatoria(self, equipe):
+        """
+            @param equipe: a equipe que terá uma máquina aleatória escolhida
+            @return: maquina: maquina escolhida aleatoriamente
+        """
+        posicao = posicao_aleatoria(equipe.maquinas)
+        return equipe.maquinas[posicao]
 
     # ------------------------------------------

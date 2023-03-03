@@ -3,163 +3,170 @@ from util.Filtro import Filtro
 from model.Equipe import Equipe
 from model.Maquina import Maquina
 
+
 def eh_equipe(elemento):
-  return True if isinstance(elemento, Equipe) else False
+    return True if isinstance(elemento, Equipe) else False
+
 
 def highligth(msg):
-  print()
-  print('###################################')
-  print(f'||| {msg} |||')
-  print('###################################')
-  print()
+    print()
+    print('###################################')
+    print(f'||| {msg} |||')
+    print('###################################')
+    print()
+
 
 class Processador:
 
-  def __init__(self, dados: FileManipulator):
-    self.dados = dados
-    self.equipes = []
-    self.index = 0
-    self.__soma_atual__ = 1
-    self.__checklist_configuracoes__ = [ ]
-    self.limit = len(self.dados.configuracoes[0])
+    def __init__(self, dados: FileManipulator):
+        self.dados = dados
+        self.equipes = []
+        self.index = 0
+        self.__soma_atual__ = 1
+        self.__checklist_configuracoes__ = []
+        self.limit = len(self.dados.configuracoes[0])
 
-    for _ in range(len(self.dados.configuracoes)):
-      self.__checklist_configuracoes__.append(False)
+        for _ in range(len(self.dados.configuracoes)):
+            self.__checklist_configuracoes__.append(False)
 
-  # ------------------------------------------
+    # ------------------------------------------
 
-  def inicializar_equipes(self) :    
-    quantidade = len(self.dados.configuracoes[0])
+    def inicializar_equipes(self):
+        quantidade = len(self.dados.configuracoes[0])
 
-    for i in range(quantidade):
-      equipe = Equipe(
-        id = i,
-        disponibilidade = self.dados.disponibilidades[i],
-        janela_final = self.dados.janelas_finais,
-        janela_inicial = self.dados.janelas_iniciais
-      )
+        for i in range(quantidade):
+            equipe = Equipe(
+                id=i,
+                disponibilidade=self.dados.disponibilidades[i],
+                janela_final=self.dados.janelas_finais,
+                janela_inicial=self.dados.janelas_iniciais
+            )
 
-      if eh_equipe(equipe) : self.equipes.append(equipe)
+            if eh_equipe(equipe):
+                self.equipes.append(equipe)
 
-  # ------------------------------------------
+    # ------------------------------------------
 
-  def processar_proximo(self) -> bool :
-    
-    if self.__alcancou_limite__(): 
-      print('##############################')
-      print('LIMITE ALCANÇADO!')
-      print('##############################')
-      return False
-    
-    self.index = self.__proximo_index__()
-    print(f'index atual = {self.index}')
+    def processar_proximo(self) -> bool:
 
-    configuracao = self.dados.configuracoes[self.index]
-    equipes_disponiveis = self.__captura_equipes_disponiveis__(configuracao)
-    self.__distribui_para_equipes_disponiveis__(equipes_disponiveis)
+        if self.__alcancou_limite__():
+            print('##############################')
+            print('LIMITE ALCANÇADO!')
+            print('##############################')
+            return False
 
-    self.index += 1
-    return True
+        self.index = self.__proximo_index__()
+        print(f'index atual = {self.index}')
 
-  # ------------------------------------------
-  
-  def encontra_equipe_com_maior_tempo(self) -> Equipe:
-    equipe_maior_tempo = self.equipes[0]
+        configuracao = self.dados.configuracoes[self.index]
+        equipes_disponiveis = self.__captura_equipes_disponiveis__(
+            configuracao)
+        self.__distribui_para_equipes_disponiveis__(equipes_disponiveis)
 
-    for equipe in self.equipes:
-      equipe_maior_tempo = max(equipe, equipe_maior_tempo)
+        self.index += 1
+        return True
 
-    return equipe_maior_tempo
+    # ------------------------------------------
 
-  # ------------------------------------------
+    def encontra_equipe_com_maior_tempo(self) -> Equipe:
+        equipe_maior_tempo = self.equipes[0]
 
-  def __distribui_para_equipes_disponiveis__(self, equipes_disponiveis):
+        for equipe in self.equipes:
+            equipe_maior_tempo = max(equipe, equipe_maior_tempo)
 
-    processamento = self.dados.processamentos[self.index]
+        return equipe_maior_tempo
 
-    for index_maquina in range( len(processamento) ):
+    # ------------------------------------------
 
-      maquina = Maquina(
-        tempo_processamento = processamento[index_maquina],
-        index_maquina = index_maquina,
-        indice_atividade = self.index
-      )
+    def __distribui_para_equipes_disponiveis__(self, equipes_disponiveis):
 
-      filtro = Filtro(maquina, equipes_disponiveis)
-      # highligth(f'original = {len(filtro.equipes_disponiveis)} equipes')
+        processamento = self.dados.processamentos[self.index]
 
-      filtro.filtraAtivosPorJanelaFinal()
-      # highligth(f'pos janela final = {len(filtro.equipes_disponiveis)} equipes')
+        for index_maquina in range(len(processamento)):
 
-      filtro.filtraAtivosPorDisponibilidade()
-      # highligth(f'pos disponibilidade = {len(filtro.equipes_disponiveis)} equipes')
+            maquina = Maquina(
+                tempo_processamento=processamento[index_maquina],
+                index_maquina=index_maquina,
+                indice_atividade=self.index
+            )
 
-      filtro.ordenaPorJanelaFinal_desc()
-      filtro.ordenaPorJanelaInicial_asc()
+            filtro = Filtro(maquina, equipes_disponiveis)
+            # highligth(f'original = {len(filtro.equipes_disponiveis)} equipes')
 
-      assert len(filtro.equipes_disponiveis) > 0, self 
+            filtro.filtraAtivosPorJanelaFinal()
+            # highligth(f'pos janela final = {len(filtro.equipes_disponiveis)} equipes')
 
-      indice_para_receber = filtro.equipes_disponiveis[0].id
-      self.equipes[indice_para_receber].adiciona_maquina(maquina)
+            filtro.filtraAtivosPorDisponibilidade()
+            # highligth(f'pos disponibilidade = {len(filtro.equipes_disponiveis)} equipes')
 
-  # ------------------------------------------
+            filtro.ordenaPorJanelaFinal_desc()
+            filtro.ordenaPorJanelaInicial_asc()
 
-  def __captura_equipes_disponiveis__(self, configuracao):
-    disponiveis = [ ]
+            assert len(filtro.equipes_disponiveis) > 0, self
 
-    for i in range( len(configuracao) ):
-      if configuracao[i] : 
-        equipe = self.equipes[i]
-        if eh_equipe(equipe) :
-          disponiveis.append(equipe)
-    
-    return disponiveis
+            indice_para_receber = filtro.equipes_disponiveis[0].id
+            equipe_destino = self.equipes[indice_para_receber]
+            equipe_destino.adiciona_maquina(maquina)
+            maquina.atribuir_equipe(equipe_destino)
 
-  # ------------------------------------------
+    # ------------------------------------------
 
-  def __proximo_index__(self):
+    def __captura_equipes_disponiveis__(self, configuracao):
+        disponiveis = []
 
-    print(f'soma desejada: {self.__soma_atual__}')
-    print('config = [', end=' ')
-    for x in self.__checklist_configuracoes__:
-      print('.' if x else "MISS", end=', ')
-    print(']')
+        for i in range(len(configuracao)):
+            if configuracao[i]:
+                equipe = self.equipes[i]
+                if eh_equipe(equipe):
+                    disponiveis.append(equipe)
 
-    for i in range(len(self.dados.configuracoes)):
-      configuracao = self.dados.configuracoes[i]
-      soma = sum(configuracao) # 1 a n
-      processado = self.__checklist_configuracoes__[i]
+        return disponiveis
 
-      if soma == self.__soma_atual__ and not processado:
-        print(f'soma atual = {soma} | esperada = {self.__soma_atual__}')
-        self.__checklist_configuracoes__[i] = True
-        return i
+    # ------------------------------------------
 
-    self.__soma_atual__ += 1
-    if not self.__alcancou_limite__():
-      return self.__proximo_index__() 
+    def __proximo_index__(self):
 
+        print(f'soma desejada: {self.__soma_atual__}')
+        print('config = [', end=' ')
+        for x in self.__checklist_configuracoes__:
+            print('.' if x else "MISS", end=', ')
+        print(']')
 
-  # ------------------------------------------
+        for i in range(len(self.dados.configuracoes)):
+            configuracao = self.dados.configuracoes[i]
+            soma = sum(configuracao)  # 1 a n
+            processado = self.__checklist_configuracoes__[i]
 
-  def __alcancou_limite__(self) -> bool :
+            if soma == self.__soma_atual__ and not processado:
+                print(
+                    f'soma atual = {soma} | esperada = {self.__soma_atual__}')
+                self.__checklist_configuracoes__[i] = True
+                return i
 
-    if self.__soma_atual__ > self.limit:
-      return True
+        self.__soma_atual__ += 1
+        if not self.__alcancou_limite__():
+            return self.__proximo_index__()
 
-    for linha in self.__checklist_configuracoes__ : 
-      if not linha:
-         return False
+    # ------------------------------------------
 
-    return True
+    def __alcancou_limite__(self) -> bool:
 
-  # ------------------------------------------
+        if self.__soma_atual__ > self.limit:
+            return True
 
-  def __str__(self):
-    aux = ''
+        for linha in self.__checklist_configuracoes__:
+            if not linha:
+                return False
 
-    for equipe in self.equipes:
-      aux += str(equipe) + '\n'
-      aux += '---------------\n'
+        return True
 
-    return aux
+    # ------------------------------------------
+
+    def __str__(self):
+        aux = ''
+
+        for equipe in self.equipes:
+            aux += str(equipe) + '\n'
+            aux += '---------------\n'
+
+        return aux
