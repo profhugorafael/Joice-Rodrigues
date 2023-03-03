@@ -16,7 +16,7 @@ def exp(number): return complex_exp(number).real
 
 
 def initial_solution():
-    dados = FileManipulator('instancia11.txt')
+    dados = FileManipulator('instancia1.txt')
     processador = Processador(dados)
     processador.inicializar_equipes()
     while processador.processar_proximo():
