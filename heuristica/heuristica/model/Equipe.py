@@ -8,14 +8,15 @@ def eh_maquina(elemento):
 class Equipe:
 
     # construtor
+    # TODO ajustar tempo de processamento para um cálculo
     def __init__(self, id,  disponibilidade, janela_final: list, janela_inicial: list):
         self.id = id
         self.disponibilidade = disponibilidade
         self.janela_final = janela_final.copy()
         self.janela_inicial = janela_inicial.copy()
-        # TODO ajustar tempo de processamento para um cálculo
+        self.historico = []
         self.tempo_de_processamento = 0
-        self.maquinas = []
+        self.maquinas = []  # ([MaquinaNaEquipe])
 
     def adiciona_maquina(self, nova_maquina):
         if not eh_maquina(nova_maquina):
@@ -39,15 +40,18 @@ class Equipe:
     # ------------------------------------------
 
     def __ajusta_janela_inicial__(self, nova_maquina):
-
-        index_maquina = nova_maquina.index
+        index = nova_maquina.index
         janela = nova_maquina.tempo_processamento
-        horario_autorizado = self.janela_inicial[index_maquina]
-        tempo_atual = self.tempo_de_processamento
+        horario_autorizado = self.janela_inicial[index]
+        tempo_inicial = self.tempo_de_processamento
 
         # precisa esperar ?
-        tempo_ajustado = max(tempo_atual, horario_autorizado) + janela
-        self.tempo_de_processamento = tempo_ajustado
+        tempo_final = max(tempo_inicial, horario_autorizado) + janela
+        tempo_de_espera = max(tempo_final - tempo_inicial, 0) - janela
+        nova_maquina.tempo_de_espera = tempo_de_espera
+        nova_maquina.janela_inicial = horario_autorizado
+        self.historico.append(tempo_final)
+        self.tempo_de_processamento = tempo_final
 
     # ------------------------------------------
 
@@ -66,13 +70,19 @@ class Equipe:
 
     # ------------------------------------------
 
-    def __str__(self):
-        aux = f'EQUIPE # {self.id}\n'
-        aux += f'DISPONIBILIDADE: {self.disponibilidade}\n'
-        aux += f'TEMPO TOTAL {self.tempo_de_processamento}\n'
-        aux += 'MAQUINAS: \n'
+    def tabela_maquinas(self):
+        aux = '| janela | ind. Ativ. | origem | Inicial | esperou | historico |\n'
+        aux += '| :-: | :-: | :-: | :-: | :-: | :-: |\n'
 
+        cont = 0
         for maquina in self.maquinas:
-            aux += '\t' + str(maquina) + '\n'
+            aux += str(maquina) + f' {self.historico[cont]}|\n'
+            cont += 1
 
+        aux += '\n'
         return aux
+
+    # ------------------------------------------
+
+    def __str__(self):
+        return f"| {self.id} | {self.disponibilidade} | {self.tempo_de_processamento} | {self.disponibilidade - self.tempo_de_processamento}"

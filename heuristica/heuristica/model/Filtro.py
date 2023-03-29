@@ -1,6 +1,4 @@
 from model.Maquina import Maquina
-from model.Equipe import Equipe
-
 
 class Filtro:
 

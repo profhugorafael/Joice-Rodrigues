@@ -1,6 +1,4 @@
-from model.Maquina import Maquina
 from random import randint
-
 
 # [ 12, 14, 15, 20 ]
 #    ^  ^
@@ -11,6 +9,7 @@ from random import randint
 # Ordena e captura disponiveis por disponibilidade e configuração
 
 # maquina -> origem == ind. ativ -> config
+
 
 # equipe
 #  - maquina activeCheckSimulateAnnealing ||
@@ -47,32 +46,47 @@ class Trocador:
 
     # ------------------------------------------
 
-    def realiza_troca(self):
+    def start(self):
         self.ordena_equipes_por_disponibilidade()
         equipe_origem = self.equipes[0]
         maquina = self.escolhe_maquina_aleatoria(equipe_origem)
         disponiveis = self.equipes_disponiveis(maquina)
 
+        # TODO reaproveitar a origem
         disponiveis.remove(equipe_origem)
 
         if len(disponiveis) == 0:
             maquina.marcar()
 
             if equipe_origem.existe_equipe_valida():
-                self.realiza_troca()
+                self.start()
 
             equipe_origem.liberar_maquinas_para_troca()
         else:
             pos_equipe_destino = posicao_aleatoria(disponiveis)
             equipe_destino = disponiveis[pos_equipe_destino]
+            self.troca(equipe_origem, equipe_destino, maquina)
 
-            equipe_origem.maquinas.remove(maquina)
-            equipe_destino.maquinas.append(maquina)
-            maquina.reatribuir_equipe(equipe_destino)
+    # ------------------------------------------
 
-            print(f'trocando a maquina: {maquina}')
-            print(f'origem: {equipe_origem}')
-            print(f'destino: {equipe_destino}')
+    def troca(self, origem, destino, maquina):
+        origem.maquinas.remove(maquina)
+        destino.maquinas.append(maquina)
+        maquina.reatribuir_equipe(destino)
+        index = origem.maquinas.index(maquina)
+        tempo_origem = origem.historico[index]
+
+        print(f'trocando a maquina: {maquina}')
+        print(f'origem: {origem}')
+        print(f'destino: {destino}')
+
+    # ------------------------------------------
+
+    # esperou[l] = max(inicial[l] - historico[l-1], 0)
+    # historico[l] = historico[l-1] + janela[l] + esperou[l]
+
+    def corrige(self, equipe, index_inicial):
+        pass  # TODO
 
     # ------------------------------------------
 

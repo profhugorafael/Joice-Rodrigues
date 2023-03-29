@@ -1,0 +1,41 @@
+{
+  "equipe1": {
+    "id": 1,
+    "janela inicial": [],
+    "tempo de processamento": [],
+    "maquinas": [
+      {
+        "index": 1,
+        "tempo de processamento": 5,
+        "atividade": 3,
+        "invalida": false
+      },
+      {
+        "index": 1,
+        "tempo de processamento": 5,
+        "atividade": 3,
+        "invalida": false
+      },
+      {
+        "index": 1,
+        "tempo de processamento": 5,
+        "atividade": 3,
+        "invalida": false
+      },
+      {
+        "index": 1,
+        "tempo de processamento": 5,
+        "atividade": 3,
+        "invalida": false
+      }
+    ]
+  }
+}
+
+// origem
+// destino
+// maquina (sempre entra no final do destino)
+
+// Se maquina eh a primeira:
+//  reconstruir a origem, ajustando janela inicial
+// Senão:

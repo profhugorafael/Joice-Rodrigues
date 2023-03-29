@@ -1,6 +1,6 @@
-from util.FileManipulator import FileManipulator
-from util.Filtro import Filtro
 from model.Equipe import Equipe
+from model.FileManipulator import FileManipulator
+from model.Filtro import Filtro
 from model.Maquina import Maquina
 
 
@@ -10,9 +10,7 @@ def eh_equipe(elemento):
 
 def highligth(msg):
     print()
-    print('###################################')
-    print(f'||| {msg} |||')
-    print('###################################')
+    print(f'> {msg}')
     print()
 
 
@@ -50,13 +48,11 @@ class Processador:
     def processar_proximo(self) -> bool:
 
         if self.__alcancou_limite__():
-            print('##############################')
-            print('LIMITE ALCANÇADO!')
-            print('##############################')
+            self.exibe_checklist_configuracao()
+            print('\n\n--------\n')
             return False
 
         self.index = self.__proximo_index__()
-        print(f'index atual = {self.index}')
 
         configuracao = self.dados.configuracoes[self.index]
         equipes_disponiveis = self.__captura_equipes_disponiveis__(
@@ -91,14 +87,8 @@ class Processador:
             )
 
             filtro = Filtro(maquina, equipes_disponiveis)
-            # highligth(f'original = {len(filtro.equipes_disponiveis)} equipes')
-
             filtro.filtraAtivosPorJanelaFinal()
-            # highligth(f'pos janela final = {len(filtro.equipes_disponiveis)} equipes')
-
             filtro.filtraAtivosPorDisponibilidade()
-            # highligth(f'pos disponibilidade = {len(filtro.equipes_disponiveis)} equipes')
-
             filtro.ordenaPorJanelaFinal_desc()
             filtro.ordenaPorJanelaInicial_asc()
 
@@ -126,11 +116,7 @@ class Processador:
 
     def __proximo_index__(self):
 
-        print(f'soma desejada: {self.__soma_atual__}')
-        print('config = [', end=' ')
-        for x in self.__checklist_configuracoes__:
-            print('.' if x else "MISS", end=', ')
-        print(']')
+        self.exibe_checklist_configuracao()
 
         for i in range(len(self.dados.configuracoes)):
             configuracao = self.dados.configuracoes[i]
@@ -138,14 +124,21 @@ class Processador:
             processado = self.__checklist_configuracoes__[i]
 
             if soma == self.__soma_atual__ and not processado:
-                print(
-                    f'soma atual = {soma} | esperada = {self.__soma_atual__}')
                 self.__checklist_configuracoes__[i] = True
                 return i
 
         self.__soma_atual__ += 1
         if not self.__alcancou_limite__():
             return self.__proximo_index__()
+
+    # ------------------------------------------
+
+    def exibe_checklist_configuracao(self):
+        print(f'soma: {self.__soma_atual__} | ', end='')
+        print('config = [', end=' ')
+        for x in self.__checklist_configuracoes__:
+            print(' ' if x else "X", end=', ')
+        print(']\n')
 
     # ------------------------------------------
 
@@ -163,10 +156,10 @@ class Processador:
     # ------------------------------------------
 
     def __str__(self):
-        aux = ''
+        aux = "Equipe | Total | Utilizado | Livre |\n"
+        aux += "| :-: | :-: | :-: | :-: |\n"
 
         for equipe in self.equipes:
             aux += str(equipe) + '\n'
-            aux += '---------------\n'
 
         return aux

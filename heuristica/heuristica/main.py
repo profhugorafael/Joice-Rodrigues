@@ -1,8 +1,8 @@
 import model.Equipe as Equipe
 
-from util.Processador import Processador
-from util.Trocador import Trocador
-from util.FileManipulator import FileManipulator
+from model.Processador import Processador
+from model.Trocador import Trocador
+from model.FileManipulator import FileManipulator
 from cmath import exp as complex_exp
 from random import uniform as uniform_random
 
@@ -23,6 +23,10 @@ def initial_solution():
         continue
 
     print(processador)
+    for equipe in processador.equipes:
+        print(f"## Equipe {equipe.id}")
+        print(equipe.tabela_maquinas())
+
     return processador.equipes, dados.configuracoes
 
 # ------------------------------------
@@ -31,7 +35,7 @@ def initial_solution():
 def generate_neighbor(equipes, configuracoes):
     copia_equipes = equipes.copy()
     neighbor_generator = Trocador(copia_equipes, configuracoes)
-    neighbor_generator.realiza_troca()
+    neighbor_generator.start()
     return copia_equipes
 
 # ------------------------------------
@@ -91,37 +95,19 @@ def simulated_annealing(temperature, cooling_rate, freeze_temperature, max_itera
 # ------------------------------------
 
 
+print("# Heuristica\n")
+
 inicial, final = simulated_annealing(100, 0.6, 20, 10)
 
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
+# print("--------------------------------------------")
 
-for equipe in final:
-    print(equipe)
-    print("-----------------")
+# print("Equipe | Total | Utilizado | Livre |\n")
+# print("| :-: | :-: | :-: | :-: |\n")
+# for equipe in final:
+#     print(equipe)
+# print("\n")
 
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
-print("--------------------------------------------")
+# print("--------------------------------------------")
 
 tempo_max_inicial = -1
 tempo_max_final = -1
