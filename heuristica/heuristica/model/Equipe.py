@@ -1,3 +1,4 @@
+import time
 from model.Maquina import Maquina
 
 
@@ -8,15 +9,22 @@ def eh_maquina(elemento):
 class Equipe:
 
     # construtor
-    # TODO ajustar tempo de processamento para um cálculo
     def __init__(self, id,  disponibilidade, janela_final: list, janela_inicial: list):
         self.id = id
         self.disponibilidade = disponibilidade
         self.janela_final = janela_final.copy()
         self.janela_inicial = janela_inicial.copy()
         self.historico = []
-        self.tempo_de_processamento = 0
-        self.maquinas = []  # ([MaquinaNaEquipe])
+        self.maquinas = []
+
+    # ------------------------------------------
+
+    @property
+    def tempo_de_processamento(self):
+        ultima_pos = len(self.historico) - 1
+        return self.historico[ultima_pos] if ultima_pos >= 0 else 0
+
+    # ------------------------------------------
 
     def adiciona_maquina(self, nova_maquina):
         if not eh_maquina(nova_maquina):
@@ -51,7 +59,6 @@ class Equipe:
         nova_maquina.tempo_de_espera = tempo_de_espera
         nova_maquina.janela_inicial = horario_autorizado
         self.historico.append(tempo_final)
-        self.tempo_de_processamento = tempo_final
 
     # ------------------------------------------
 
@@ -73,6 +80,8 @@ class Equipe:
     def tabela_maquinas(self):
         aux = '| janela | ind. Ativ. | origem | Inicial | esperou | historico |\n'
         aux += '| :-: | :-: | :-: | :-: | :-: | :-: |\n'
+
+        time.sleep(1)
 
         cont = 0
         for maquina in self.maquinas:

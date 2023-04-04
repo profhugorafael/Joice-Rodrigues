@@ -49,44 +49,68 @@ class Trocador:
     def start(self):
         self.ordena_equipes_por_disponibilidade()
         equipe_origem = self.equipes[0]
-        maquina = self.escolhe_maquina_aleatoria(equipe_origem)
+        posicao_saida = posicao_aleatoria(equipe_origem.maquinas)
+        maquina = equipe_origem.maquinas[posicao_saida]
+
         disponiveis = self.equipes_disponiveis(maquina)
 
-        # TODO reaproveitar a origem
-        disponiveis.remove(equipe_origem)
+        posicao_equipe_destino = posicao_aleatoria(disponiveis)
+        equipe_destino = disponiveis[posicao_equipe_destino]
+        posicao_entrada = posicao_aleatoria(equipe_destino.maquinas)
 
-        if len(disponiveis) == 0:
-            maquina.marcar()
+        self.troca(equipe_origem, equipe_destino,
+                   posicao_entrada, posicao_saida)
 
-            if equipe_origem.existe_equipe_valida():
-                self.start()
+        # if len(disponiveis) == 0:
+        #     maquina.marcar()
 
-            equipe_origem.liberar_maquinas_para_troca()
-        else:
-            pos_equipe_destino = posicao_aleatoria(disponiveis)
-            equipe_destino = disponiveis[pos_equipe_destino]
-            self.troca(equipe_origem, equipe_destino, maquina)
+        #     if equipe_origem.existe_equipe_valida():
+        #         self.start()
+
+        #     equipe_origem.liberar_maquinas_para_troca()
+        # else:
 
     # ------------------------------------------
 
-    def troca(self, origem, destino, maquina):
-        origem.maquinas.remove(maquina)
-        destino.maquinas.append(maquina)
+    def troca(self, origem, destino, saida, entrada):
+
+        print('## trocando a maquina...\n\n')
+        print(f'- origem: {origem.id} + linha_saida: {saida}')
+        print(f'- destino: {destino.id} + linha_entrada: {entrada}\n')
+
+        maquina = origem.maquinas.pop(saida)
+        self.corrige(origem, saida)
+
+        destino.maquinas.insert(entrada, maquina)
+        self.corrige(destino, entrada)
+
         maquina.reatribuir_equipe(destino)
-        index = origem.maquinas.index(maquina)
-        tempo_origem = origem.historico[index]
 
-        print(f'trocando a maquina: {maquina}')
-        print(f'origem: {origem}')
-        print(f'destino: {destino}')
+        print(f'- maquina {maquina}')
+        print('- trocado!\n\n')
 
     # ------------------------------------------
 
-    # esperou[l] = max(inicial[l] - historico[l-1], 0)
-    # historico[l] = historico[l-1] + janela[l] + esperou[l]
+    # historico_anterior = historico[l - 1]
+    # esperou[l] = max(inicial[l] - historico_acumulado, 0)
+    # historico[l] = historico_anterior + janela[l] + esperou[l]
 
-    def corrige(self, equipe, index_inicial):
-        pass  # TODO
+    def corrige(self, equipe, linha):
+        if not 0 <= linha < len(self.equipes):
+            return
+
+        maquina = equipe.maquinas[linha]
+
+        inicial_linha = equipe.janela_inicial[maquina.index]
+        janela = maquina.tempo_processamento
+
+        historico_anterior = equipe.historico[linha - 1] if linha != 0 else 0
+        delta_espera = inicial_linha - historico_anterior
+        esperou_atual = max(delta_espera, 0)
+
+        equipe.historico[linha] = historico_anterior + janela + esperou_atual
+
+        self.corrige(equipe, linha + 1)
 
     # ------------------------------------------
 

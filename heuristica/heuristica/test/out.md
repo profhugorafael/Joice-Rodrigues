@@ -41,3 +41,49 @@ Equipe | Total | Utilizado | Livre |
 | 3 | 1 | 1 | 3 | 0 | 14|
 
 
+## trocando a maquina...
+
+
+- origem: 0 + linha_saida: 4
+- destino: 0 + linha_entrada: 0
+
+- maquina | 1 | 1 | 2 | 4 | 0 |
+- trocado!
+
+
+## trocando a maquina...
+
+
+- origem: 0 + linha_saida: 4
+- destino: 0 + linha_entrada: 4
+
+- maquina | 1 | 0 | 3 | 7 | 0 |
+- trocado!
+
+
+## trocando a maquina...
+
+
+- origem: 0 + linha_saida: 2
+- destino: 1 + linha_entrada: 5
+
+- maquina | 3 | 0 | 1 | 3 | 0 |
+- trocado!
+
+
+## trocando a maquina...
+
+
+- origem: 0 + linha_saida: 2
+- destino: 1 + linha_entrada: 4
+
+- maquina | 4 | 0 | 2 | 4 | 0 |
+- trocado!
+
+
+## trocando a maquina...
+
+
+- origem: 0 + linha_saida: 6
+- destino: 1 + linha_entrada: 3
+
