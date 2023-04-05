@@ -27,7 +27,9 @@ from random import randint
 def posicao_aleatoria(vetor):
     inicio = 0
     final = len(vetor)
-    return randint(inicio, final-1)
+    aleatorio = randint(inicio, final-1)
+    print(f'\n( size: **{final}**, random: **{aleatorio})**\n ')
+    return aleatorio
 
 
 class Trocador:
@@ -61,30 +63,26 @@ class Trocador:
         self.troca(equipe_origem, equipe_destino,
                    posicao_entrada, posicao_saida)
 
-        # if len(disponiveis) == 0:
-        #     maquina.marcar()
-
-        #     if equipe_origem.existe_equipe_valida():
-        #         self.start()
-
-        #     equipe_origem.liberar_maquinas_para_troca()
-        # else:
-
     # ------------------------------------------
 
-    def troca(self, origem, destino, saida, entrada):
+    def troca(self, origem, destino, entrada, saida):
+
+        if origem != destino and len(origem.maquinas) != len(destino.maquinas):
+            print('## Erro aqui! :x:')
 
         print('## trocando a maquina...\n\n')
-        print(f'- origem: {origem.id} + linha_saida: {saida}')
-        print(f'- destino: {destino.id} + linha_entrada: {entrada}\n')
+        print(
+            f'- tamanhos: (**origem:** {len(origem.maquinas)} , **destino:** {len(destino.maquinas)})')
 
+        print(f'- origem: {origem.id} + linha_saida: {saida}\n')
         maquina = origem.maquinas.pop(saida)
+        historico_anterior = origem.historico.pop(saida)
         self.corrige(origem, saida)
 
+        print(f'- destino: {destino.id} + linha_entrada: {entrada}\n')
         destino.maquinas.insert(entrada, maquina)
+        destino.historico.insert(entrada, historico_anterior)
         self.corrige(destino, entrada)
-
-        maquina.reatribuir_equipe(destino)
 
         print(f'- maquina {maquina}')
         print('- trocado!\n\n')
@@ -96,9 +94,11 @@ class Trocador:
     # historico[l] = historico_anterior + janela[l] + esperou[l]
 
     def corrige(self, equipe, linha):
-        if not 0 <= linha < len(self.equipes):
+        if linha < 0 or linha >= len(equipe.maquinas):
+            # print(f'\t\tparando... (linha: {linha})\n')
             return
 
+        # print(f'\t\tid = {equipe.id}, corrigindo linha: {linha}\n')
         maquina = equipe.maquinas[linha]
 
         inicial_linha = equipe.janela_inicial[maquina.index]
@@ -110,7 +110,7 @@ class Trocador:
 
         equipe.historico[linha] = historico_anterior + janela + esperou_atual
 
-        self.corrige(equipe, linha + 1)
+        self.corrige(equipe, linha+1)
 
     # ------------------------------------------
 

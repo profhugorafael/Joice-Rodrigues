@@ -97,7 +97,6 @@ class Processador:
             indice_para_receber = filtro.equipes_disponiveis[0].id
             equipe_destino = self.equipes[indice_para_receber]
             equipe_destino.adiciona_maquina(maquina)
-            maquina.atribuir_equipe(equipe_destino)
 
     # ------------------------------------------
 

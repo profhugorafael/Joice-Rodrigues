@@ -62,26 +62,10 @@ class Equipe:
 
     # ------------------------------------------
 
-    def liberar_maquinas_para_troca(self):
-        for maquina in self.maquinas:
-            maquina.desmarcar()
-
-    # ------------------------------------------
-
-    def existe_equipe_valida(self):
-        for maquina in self.maquinas:
-            if not maquina.invalida:
-                return True
-
-        return False
-
-    # ------------------------------------------
-
     def tabela_maquinas(self):
         aux = '| janela | ind. Ativ. | origem | Inicial | esperou | historico |\n'
         aux += '| :-: | :-: | :-: | :-: | :-: | :-: |\n'
-
-        time.sleep(1)
+        print(self.historico)
 
         cont = 0
         for maquina in self.maquinas:

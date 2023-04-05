@@ -6,22 +6,6 @@ class Maquina:
         self.tempo_de_espera = 0
         self.janela_inicial = 0
         self.atividade = indice_atividade
-        self.invalida = False
-
-    def atribuir_equipe(self, equipe):
-        self.equipe = equipe
-        self.atribuida = True
-
-    def reatribuir_equipe(self, equipe):
-        if not self.atribuida:
-            return
-        self.equipe = equipe
-
-    def marcar(self):
-        self.invalida = True
-
-    def desmarcar(self):
-        self.invalida = False
 
     def __str__(self):
         return f'| {self.tempo_processamento} | {self.atividade} | {self.index} | {self.janela_inicial} | {self.tempo_de_espera} |'

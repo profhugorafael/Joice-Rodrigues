@@ -120,5 +120,9 @@ for equipe in final:
     if equipe.tempo_de_processamento > tempo_max_final:
         tempo_max_final = equipe.tempo_de_processamento
 
-print(f"TEMPO MAX INICIAL: {tempo_max_inicial}")
+for equipe in final:
+    print(f"## Equipe {equipe.id}")
+    print(equipe.tabela_maquinas())
+
+print(f"TEMPO MAX INICIAL: {tempo_max_inicial}\n")
 print(f"TEMPO MAX FINAL: {tempo_max_final}")
