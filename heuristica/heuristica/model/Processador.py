@@ -87,10 +87,16 @@ class Processador:
             )
 
             filtro = Filtro(maquina, equipes_disponiveis)
-            filtro.filtraAtivosPorJanelaFinal()
-            filtro.filtraAtivosPorDisponibilidade()
-            filtro.ordenaPorJanelaFinal_desc()
-            filtro.ordenaPorJanelaInicial_asc()
+            filtro.filtra__por_janela_final()
+            filtro.filtra_por_disponibilidade()
+            filtro.ordena(
+                por='janela_final',
+                ordem='decrescente'
+            )
+            filtro.ordena(
+                por='janela_inicial',
+                ordem='crescente'
+            )
 
             assert len(filtro.equipes_disponiveis) > 0, self
 

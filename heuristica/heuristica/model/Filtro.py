@@ -1,5 +1,6 @@
 from model.Maquina import Maquina
 
+
 class Filtro:
 
     # ------------------------------------------
@@ -9,7 +10,7 @@ class Filtro:
 
     # ------------------------------------------
 
-    def filtraAtivosPorJanelaFinal(self):
+    def filtra__por_janela_final(self):
         disponiveis_pos_filtro = []
 
         for equipe in self.equipes_disponiveis:
@@ -23,7 +24,7 @@ class Filtro:
 
     # ------------------------------------------
 
-    def filtraAtivosPorDisponibilidade(self):
+    def filtra_por_disponibilidade(self):
         disponiveis_pos_filtro = []
 
         for equipe in self.equipes_disponiveis:
@@ -34,21 +35,14 @@ class Filtro:
 
     # ------------------------------------------
 
-    def ordenaPorJanelaFinal_desc(self):
-        ordenacao = sorted(
-            self.equipes_disponiveis,
-            key=lambda e: e.janela_final,
-            reverse=True)
+    def ordena(self, por, ordem):
 
-        self.equipes_disponiveis = ordenacao.copy()
-
-    # ------------------------------------------
-
-    def ordenaPorJanelaInicial_asc(self):
+        ordem = True if (ordem == 'decrescente') else False
 
         ordenacao = sorted(
             self.equipes_disponiveis,
-            key=lambda equipe: equipe.janela_inicial
+            key=lambda equipe: getattr(equipe, por),
+            reverse=ordem
         )
 
         self.equipes_disponiveis = ordenacao.copy()

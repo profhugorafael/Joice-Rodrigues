@@ -15,8 +15,8 @@ def exp(number): return complex_exp(number).real
 # ------------------------------------
 
 
-def initial_solution():
-    dados = FileManipulator('instancia1.txt')
+def initial_solution(filename):
+    dados = FileManipulator(f'{filename}.txt')
     processador = Processador(dados)
     processador.inicializar_equipes()
     while processador.processar_proximo():
@@ -33,6 +33,7 @@ def initial_solution():
 
 
 def generate_neighbor(equipes, configuracoes):
+    print('\n----\n')
     copia_equipes = equipes.copy()
     neighbor_generator = Trocador(copia_equipes, configuracoes)
     neighbor_generator.start()
@@ -53,7 +54,7 @@ def energy(equipes):
 # ------------------------------------
 
 
-def simulated_annealing(temperature, cooling_rate, freeze_temperature, max_iterations):
+def simulated_annealing(istance_id, temperature, cooling_rate, freeze_temperature, max_iterations):
     # machines: lista de máquinas
     # temperature: temperatura inicial
     # teams: lista de equipe
@@ -61,7 +62,8 @@ def simulated_annealing(temperature, cooling_rate, freeze_temperature, max_itera
     # max_iterations: número máximo de iterações
 
     # Inicializa a solução atual com uma distribuição aleatória de máquinas em equipes
-    base_solution, teams_configuration = initial_solution()
+    base_solution, teams_configuration = initial_solution(
+        f'instancia{istance_id}')
     current_solution = base_solution
     best_solution = current_solution
 
@@ -97,18 +99,7 @@ def simulated_annealing(temperature, cooling_rate, freeze_temperature, max_itera
 
 print("# Heuristica\n")
 
-inicial, final = simulated_annealing(100, 0.6, 20, 10)
-
-# print("--------------------------------------------")
-
-# print("Equipe | Total | Utilizado | Livre |\n")
-# print("| :-: | :-: | :-: | :-: |\n")
-# for equipe in final:
-#     print(equipe)
-# print("\n")
-
-# print("--------------------------------------------")
-
+inicial, final = simulated_annealing(3, 100, 0.6, 20, 10)
 tempo_max_inicial = -1
 tempo_max_final = -1
 

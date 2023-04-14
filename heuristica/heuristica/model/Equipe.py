@@ -26,6 +26,14 @@ class Equipe:
 
     # ------------------------------------------
 
+    @property
+    def tempo_livre(self):
+        disponibilidade = self.disponibilidade
+        tempo_atual = self.historico[-1]
+        return disponibilidade - tempo_atual
+
+    # ------------------------------------------
+
     def adiciona_maquina(self, nova_maquina):
         if not eh_maquina(nova_maquina):
             return
@@ -33,17 +41,11 @@ class Equipe:
         self.maquinas.append(nova_maquina)
         self.__ajusta_janela_inicial__(nova_maquina)
         self.__ajusta_tempo_janela_final__(nova_maquina)
-        self.__ajusta_tempo_disponibilidade__(nova_maquina)
 
     # ------------------------------------------
 
     def __ajusta_tempo_janela_final__(self, nova_maquina):
         self.janela_final[nova_maquina.index] -= nova_maquina.tempo_processamento
-
-    # ------------------------------------------
-
-    def __ajusta_tempo_disponibilidade__(self, nova_maquina):
-        self.disponibilidade -= nova_maquina.tempo_processamento
 
     # ------------------------------------------
 
@@ -78,4 +80,9 @@ class Equipe:
     # ------------------------------------------
 
     def __str__(self):
-        return f"| {self.id} | {self.disponibilidade} | {self.tempo_de_processamento} | {self.disponibilidade - self.tempo_de_processamento}"
+        id_equipe = self.id
+        total = self.disponibilidade
+        utilizado = self.tempo_de_processamento
+        livre = self.disponibilidade - self.tempo_de_processamento
+
+        return f"| {id_equipe} | {total} | {utilizado} | {livre}"

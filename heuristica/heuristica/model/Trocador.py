@@ -135,7 +135,7 @@ class Trocador:
 
     # ------------------------------------------
 
-    def captura_equipes_com_disponibilidade(self, maquina):
+    def captura_equipes_por_configuracao(self, maquina):
         disponiveis = []
         configuracao = self.configuracoes[maquina.atividade]
 
@@ -149,11 +149,11 @@ class Trocador:
 
     # ------------------------------------------
 
-    def captura_equipes_por_configuracao(self, maquina):
+    def captura_equipes_com_disponibilidade(self, maquina):
         disponiveis = []
 
         for equipe in self.equipes:
-            if equipe.disponibilidade > maquina.tempo_processamento:
+            if equipe.tempo_livre >= maquina.tempo_processamento:
                 disponiveis.append(equipe)
 
         return disponiveis
