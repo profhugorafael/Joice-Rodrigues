@@ -64,7 +64,8 @@ def simulated_annealing(istance_id, temperature, cooling_rate, freeze_temperatur
     # Inicializa a solução atual com uma distribuição aleatória de máquinas em equipes
     base_solution, teams_configuration = initial_solution(
         f'instancia{istance_id}')
-    current_solution = base_solution
+
+    current_solution = base_solution.copy()
     best_solution = current_solution
 
     # Loop principal
@@ -99,19 +100,21 @@ def simulated_annealing(istance_id, temperature, cooling_rate, freeze_temperatur
 
 print("# Heuristica\n")
 
-inicial, final = simulated_annealing(3, 100, 0.6, 20, 10)
+sol_inicial, sol_final = simulated_annealing(3, 100, 0.6, 20, 10)
 tempo_max_inicial = -1
 tempo_max_final = -1
 
-for equipe in inicial:
+for equipe in sol_inicial:
     if equipe.tempo_de_processamento > tempo_max_inicial:
         tempo_max_inicial = equipe.tempo_de_processamento
 
-for equipe in final:
+print(f"**TEMPO MAXIMO SOL INICIAL =** {tempo_max_inicial}")
+
+for equipe in sol_final:
     if equipe.tempo_de_processamento > tempo_max_final:
         tempo_max_final = equipe.tempo_de_processamento
 
-for equipe in final:
+for equipe in sol_final:
     print(f"## Equipe {equipe.id}")
     print(equipe.tabela_maquinas())
 
